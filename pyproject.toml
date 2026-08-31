@@ -1,0 +1,14 @@
+[project]
+name = "ai-assistant"
+version = "0.1.0"
+description = "A small RAG knowledge assistant project"
+requires-python = ">=3.13"
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
