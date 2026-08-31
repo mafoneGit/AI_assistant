@@ -8,6 +8,8 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "pytest",
+    "openai",
+    "python-dotenv",
 ]
 
 [tool.pytest.ini_options]
