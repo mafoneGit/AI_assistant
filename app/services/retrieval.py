@@ -15,14 +15,14 @@ def cosine_similarity(vector_a: list[float], vector_b: list[float]) -> float:
     return dot_product / (magnitude_a * magnitude_b)
 
 
-def find_most_relevant_chunk(
+def find_relevant_chunks(
     question: str,
     index: list[dict],
-) -> tuple[str, float]:
+    top_k: int = 3,
+) -> list[tuple[str, float]]:
     question_embedding = create_embedding(question)
 
-    best_chunk = ""
-    best_score = -1.0
+    results = []
 
     for item in index:
         score = cosine_similarity(
@@ -30,8 +30,13 @@ def find_most_relevant_chunk(
             item["embedding"],
         )
 
-        if score > best_score:
-            best_score = score
-            best_chunk = item["text"]
+        results.append(
+            (item["text"], score)
+        )
 
-    return best_chunk, best_score
+    results.sort(
+        key=lambda item: item[1],
+        reverse=True,
+    )
+
+    return results[:top_k]

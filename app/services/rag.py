@@ -1,17 +1,24 @@
 from app.services.knowledge_base import knowledge_base
 from app.services.llm import generate_answer
-from app.services.retrieval import find_most_relevant_chunk
+from app.services.retrieval import find_relevant_chunks
 
 
 def ask_rag(question: str) -> tuple[str, str, float]:
-    best_chunk, score = find_most_relevant_chunk(
+    results = find_relevant_chunks(
         question,
         knowledge_base.index,
+        top_k=3,
+    )
+
+    context = "\n\n".join(
+        text for text, score in results
     )
 
     answer = generate_answer(
         question=question,
-        context=best_chunk,
+        context=context,
     )
 
-    return answer, best_chunk, score
+    best_score = results[0][1]
+
+    return answer, context, best_score
