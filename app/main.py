@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.models import AskRequest, AskResponse
+from app.services.rag import ask_rag
 
 app = FastAPI(
     title="AI Assistant",
@@ -15,6 +16,10 @@ def health_check():
 
 @app.post("/ask", response_model=AskResponse)
 def ask_question(request: AskRequest):
+    answer, source, score = ask_rag(request.question)
+
     return AskResponse(
-        answer=f"You asked: {request.question}"
+        answer=answer,
+        source=source,
+        score=score,
     )

@@ -7,3 +7,5 @@ class AskRequest(BaseModel):
 
 class AskResponse(BaseModel):
     answer: str
+    source: str
+    score: float
