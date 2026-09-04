@@ -1,15 +1,16 @@
 from app.services.embeddings import create_embedding
 
 
-def build_index(chunks: list[str]) -> list[dict]:
+def build_index(chunks: list[dict]) -> list[dict]:
     index = []
 
     for chunk in chunks:
-        embedding = create_embedding(chunk)
+        embedding = create_embedding(chunk["text"])
 
         index.append(
             {
-                "text": chunk,
+                "section": chunk["section"],
+                "text": chunk["text"],
                 "embedding": embedding,
             }
         )
