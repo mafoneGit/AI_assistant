@@ -1,21 +1,22 @@
-def split_text(text: str, chunk_size: int = 300) -> list[str]:
-    paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
+def split_text(text: str) -> list[str]:
+    chunks = []
+    current_section = []
 
-    chunks: list[str] = []
-    current_chunk = ""
+    for line in text.splitlines():
+        line = line.strip()
 
-    for paragraph in paragraphs:
-        candidate = f"{current_chunk}\n\n{paragraph}".strip()
+        if not line:
+            continue
 
-        if len(candidate) <= chunk_size:
-            current_chunk = candidate
+        if line.startswith("[") and line.endswith("]"):
+            if current_section:
+                chunks.append("\n".join(current_section))
+
+            current_section = [line]
         else:
-            if current_chunk:
-                chunks.append(current_chunk)
+            current_section.append(line)
 
-            current_chunk = paragraph
-
-    if current_chunk:
-        chunks.append(current_chunk)
+    if current_section:
+        chunks.append("\n".join(current_section))
 
     return chunks

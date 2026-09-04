@@ -10,10 +10,8 @@ class KnowledgeBase:
     def load(self, file_path: str) -> None:
         text = load_text_file(file_path)
 
-        chunks = split_text(
-            text,
-            chunk_size=120,
-        )
+        chunks = split_text(text)        
+        
 
         self.index = build_index(chunks)
 
