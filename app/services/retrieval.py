@@ -1,59 +1,30 @@
-import math
-
 from app.services.embeddings import create_embedding
-
-
-def cosine_similarity(
-    vector_a: list[float],
-    vector_b: list[float],
-) -> float:
-    dot_product = sum(
-        a * b
-        for a, b in zip(vector_a, vector_b)
-    )
-
-    magnitude_a = math.sqrt(
-        sum(a * a for a in vector_a)
-    )
-
-    magnitude_b = math.sqrt(
-        sum(b * b for b in vector_b)
-    )
-
-    if magnitude_a == 0 or magnitude_b == 0:
-        return 0.0
-
-    return dot_product / (magnitude_a * magnitude_b)
+from app.services.vector_store import COLLECTION_NAME, client
 
 
 def find_relevant_chunks(
     question: str,
-    index: list[dict],
     top_k: int = 3,
     threshold: float = 0.45,
 ) -> list[dict]:
     question_embedding = create_embedding(question)
 
-    results = []
-
-    for item in index:
-        score = cosine_similarity(
-            question_embedding,
-            item["embedding"],
-        )
-
-        if score >= threshold:
-            results.append(
-                {
-                    "section": item["section"],
-                    "text": item["text"],
-                    "score": score,
-                }
-            )
-
-    results.sort(
-        key=lambda item: item["score"],
-        reverse=True,
+    search_result = client.query_points(
+        collection_name=COLLECTION_NAME,
+        query=question_embedding,
+        limit=top_k,
+        score_threshold=threshold,
     )
 
-    return results[:top_k]
+    results = []
+
+    for point in search_result.points:
+        results.append(
+            {
+                "section": point.payload["section"],
+                "text": point.payload["text"],
+                "score": point.score,
+            }
+        )
+
+    return results

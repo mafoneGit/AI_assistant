@@ -6,10 +6,9 @@ from app.services.retrieval import find_relevant_chunks
 def ask_rag(question: str) -> tuple[str, list[dict], float]:
     results = find_relevant_chunks(
         question,
-        knowledge_base.index,
         top_k=3,
         threshold=0.45,
-    )
+)
 
     if not results:
         return (
